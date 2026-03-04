@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#f0ede8" />
+  <title>Strive Fitness</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-text">STRIVE</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- PARALLAX BLOBS -->
+<div class="blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+  <div class="blob blob-5"></div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="fade-in d1">
+  <a href="#" class="logo"><span>STRIVE</span><span>FITNESS</span></a>
+  <div class="nav-center">
+    <svg viewBox="0 0 48 24" fill="none" style="width:48px;height:24px">
+      <rect x="0"  y="8"  width="5"  height="8"  rx="1"   fill="#1a1a18"/>
+      <rect x="5"  y="6"  width="4"  height="12" rx="1.5" fill="#1a1a18"/>
+      <rect x="9"  y="4"  width="3"  height="16" rx="1.5" fill="#1a1a18"/>
+      <rect x="12" y="10" width="24" height="4"  rx="2"   fill="#1a1a18"/>
+      <rect x="36" y="4"  width="3"  height="16" rx="1.5" fill="#1a1a18"/>
+      <rect x="39" y="6"  width="4"  height="12" rx="1.5" fill="#1a1a18"/>
+      <rect x="43" y="8"  width="5"  height="8"  rx="1"   fill="#1a1a18"/>
+    </svg>
+  </div>
+  <div class="nav-right">
+    <button class="btn-join">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M1 6.5h11M6.5 1l5.5 5.5-5.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Join Now
+    </button>
+    <button class="btn-menu" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="bg-text-strive" id="bgText">STRIVE</div>
+  <div class="bg-text-fitness" id="bgFitnessEl">FITNESS</div>
+
+  <div class="person-wrap" id="personWrap">
+    <canvas id="bodyCanvas"></canvas>
+    <canvas id="revealCanvas"></canvas>
+  </div>
+</section>
+
+<!-- UI OVERLAYS -->
+<div class="hover-hint" id="hoverHint">Move cursor over body to reveal</div>
+
+<div class="card-info fade-in d3">
+  <div class="card-label">
+    <svg width="9" height="13" viewBox="0 0 10 14" fill="none" style="vertical-align:middle;margin-right:4px;margin-bottom:1px">
+      <path d="M6 0L0 8h4.5L4 14l7-9H6L6 0z" fill="#1a1a18"/>
+    </svg>
+    LIMITED TIME
+  </div>
+  <div class="card-stat">50% OFF</div>
+  <div class="card-sub">Founding Member Deal</div>
+  <div class="card-divider"></div>
+  <div class="card-offer-row">
+    <span class="card-original">&#8377;14999</span>
+    <span class="card-price">&#8377;8999<span class="card-mo">/yr</span></span>
+  </div>
+  <div class="card-badge"><div class="badge-dot"></div><span>3 spots left</span></div>
+</div>
+
+<div class="scroll-hint fade-in d3">
+  <span>Scroll</span>
+  <div class="scroll-line"></div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Strength</span><span class="marquee-dot">&#10022;</span>
+    <span>Discipline</span><span class="marquee-dot">&#10022;</span>
+    <span>Endurance</span><span class="marquee-dot">&#10022;</span>
+    <span>Power</span><span class="marquee-dot">&#10022;</span>
+    <span>Results</span><span class="marquee-dot">&#10022;</span>
+    <span>Consistency</span><span class="marquee-dot">&#10022;</span>
+    <span>Elite Training</span><span class="marquee-dot">&#10022;</span>
+    <span>Strength</span><span class="marquee-dot">&#10022;</span>
+    <span>Discipline</span><span class="marquee-dot">&#10022;</span>
+    <span>Endurance</span><span class="marquee-dot">&#10022;</span>
+    <span>Power</span><span class="marquee-dot">&#10022;</span>
+    <span>Results</span><span class="marquee-dot">&#10022;</span>
+    <span>Consistency</span><span class="marquee-dot">&#10022;</span>
+    <span>Elite Training</span><span class="marquee-dot">&#10022;</span>
+  </div>
+</div>
+
+<script>
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1400);
+
+  const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+  const cursorEl    = document.getElementById('cursor');
+  const ringEl      = document.getElementById('ring');
+  const personWrap  = document.getElementById('personWrap');
+  const hint        = document.getElementById('hoverHint');
+  const bgText      = document.getElementById('bgText');
+  const bgFitness   = document.getElementById('bgFitnessEl');
+  const blobs       = document.querySelectorAll('.blob');
+  const bodyCanvas  = document.getElementById('bodyCanvas');
+  const revealCanvas= document.getElementById('revealCanvas');
+  const bCtx        = bodyCanvas.getContext('2d');
+  const rCtx        = revealCanvas.getContext('2d');
+
+  const bodyImg    = new Image();
+  const clothedImg = new Image();
+  bodyImg.src    = 'body.png';
+  clothedImg.src = 'hero.png';
+
+  // ── REVEAL SETTINGS ──────────────────────────────────────────
+  const MAX_RADIUS     = 80;
+  const LERP_IN        = 0.12;
+  const LERP_OUT       = 0.03;
+  const CURSOR_LERP    = 0.12;
+  const LINGER_MS      = 600;
+  const BLOB_POINTS    = 64;
+  const WOBBLE_AMP     = 0.29;
+  const WOBBLE_SPEED   = 0.6;
+  const MOMENTUM_AMP   = 10;
+  const MOMENTUM_DECAY = 1;
+
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  let spotX = null, spotY = null;
+  let smoothX = null, smoothY = null;
+  let prevSmoothX = null, prevSmoothY = null;
+  let momentumX = 0, momentumY = 0;
+  let spotRadius = 0, targetRadius = 0;
+  let isOverBody = false;
+  let lingerTimer = null;
+  let time = 0;
+
+  function drawContained(ctx, img, W, H) {
+    const iW = img.naturalWidth  || img.width;
+    const iH = img.naturalHeight || img.height;
+    if (!iW || !iH) return;
+    const scale = Math.min(W / iW, H / iH);
+    const dW = iW * scale;
+    const dH = iH * scale;
+    const dx = (W - dW) / 2;
+    const dy = (H - dH) / 2;
+    ctx.drawImage(img, dx, dy, dW, dH);
+  }
+
+  function resizeCanvases() {
+    const W = personWrap.offsetWidth;
+    const H = personWrap.offsetHeight;
+    bodyCanvas.width    = W; bodyCanvas.height    = H;
+    revealCanvas.width  = W; revealCanvas.height  = H;
+    drawBody();
+  }
+
+  function drawBody() {
+    const W = bodyCanvas.width;
+    const H = bodyCanvas.height;
+    bCtx.clearRect(0, 0, W, H);
+    if (bodyImg.complete) drawContained(bCtx, bodyImg, W, H);
+  }
+
+  function drawSmoothBlob(ctx, cx, cy, radius, t, mvx, mvy) {
+    var pts = [];
+    for (var i = 0; i < BLOB_POINTS; i++) {
+      var angle = (i / BLOB_POINTS) * Math.PI * 2;
+      var idle =
+        Math.sin(angle * 2 + t * WOBBLE_SPEED)       * 0.5 +
+        Math.sin(angle * 3 - t * WOBBLE_SPEED * 1.4) * 0.3 +
+        Math.sin(angle * 7 + t * WOBBLE_SPEED * 0.9) * 0.2;
+      var cosA = Math.cos(angle);
+      var sinA = Math.sin(angle);
+      var projection = cosA * mvx + sinA * mvy;
+      var r = radius * (1 + WOBBLE_AMP * idle) + projection * MOMENTUM_AMP;
+      pts.push({ x: cx + cosA * r, y: cy + sinA * r });
+    }
+    ctx.beginPath();
+    var n = pts.length;
+    for (var i = 0; i < n; i++) {
+      var p0 = pts[(i - 1 + n) % n];
+      var p1 = pts[i];
+      var p2 = pts[(i + 1) % n];
+      var p3 = pts[(i + 2) % n];
+      var cp1x = p1.x + (p2.x - p0.x) / 6;
+      var cp1y = p1.y + (p2.y - p0.y) / 6;
+      var cp2x = p2.x - (p3.x - p1.x) / 6;
+      var cp2y = p2.y - (p3.y - p1.y) / 6;
+      if (i === 0) ctx.moveTo(p1.x, p1.y);
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+    }
+    ctx.closePath();
+  }
+
+  function draw() {
+    var W = revealCanvas.width;
+    var H = revealCanvas.height;
+    rCtx.clearRect(0, 0, W, H);
+    if (!clothedImg.complete) { requestAnimationFrame(draw); return; }
+
+    time += 0.03;
+    var lerpSpeed = isOverBody ? LERP_IN : LERP_OUT;
+    spotRadius += (targetRadius - spotRadius) * lerpSpeed;
+
+    if (smoothX === null && spotX !== null) {
+      smoothX = spotX; smoothY = spotY;
+      prevSmoothX = spotX; prevSmoothY = spotY;
+    }
+    if (spotX !== null) {
+      prevSmoothX = smoothX; prevSmoothY = smoothY;
+      smoothX += (spotX - smoothX) * CURSOR_LERP;
+      smoothY += (spotY - smoothY) * CURSOR_LERP;
+      var rawVX = smoothX - prevSmoothX;
+      var rawVY = smoothY - prevSmoothY;
+      momentumX += (rawVX - momentumX) * 0.3;
+      momentumY += (rawVY - momentumY) * 0.3;
+    }
+    momentumX *= (1 - MOMENTUM_DECAY);
+    momentumY *= (1 - MOMENTUM_DECAY);
+
+    rCtx.save();
+    drawContained(rCtx, clothedImg, W, H);
+
+    if (smoothX !== null && spotRadius > 1) {
+      rCtx.globalCompositeOperation = 'destination-out';
+      var grad = rCtx.createRadialGradient(smoothX, smoothY, 0, smoothX, smoothY, spotRadius * 1.4);
+      grad.addColorStop(0,    'rgba(0,0,0,1)');
+      grad.addColorStop(0.55, 'rgba(0,0,0,0.97)');
+      grad.addColorStop(0.78, 'rgba(0,0,0,0.7)');
+      grad.addColorStop(0.92, 'rgba(0,0,0,0.2)');
+      grad.addColorStop(1,    'rgba(0,0,0,0)');
+      rCtx.fillStyle = grad;
+      drawSmoothBlob(rCtx, smoothX, smoothY, spotRadius, time, momentumX, momentumY);
+      rCtx.fill();
+    }
+    rCtx.restore();
+    requestAnimationFrame(draw);
+  }
+
+  var loaded = 0;
+  function onLoad() {
+    loaded++;
+    if (loaded === 2) { resizeCanvases(); draw(); }
+  }
+  bodyImg.onload    = onLoad;
+  clothedImg.onload = onLoad;
+  if (bodyImg.complete)    onLoad();
+  if (clothedImg.complete) onLoad();
+
+  window.addEventListener('resize', resizeCanvases);
+
+  // ── CURSOR (desktop only) ────────────────────────────────────
+  if (!isTouch) {
+    document.addEventListener('mousemove', function(e) {
+      mx = e.clientX; my = e.clientY;
+      cursorEl.style.left = mx + 'px';
+      cursorEl.style.top  = my + 'px';
+    });
+
+    (function animRing() {
+      rx += (mx - rx) * 0.1;
+      ry += (my - ry) * 0.1;
+      ringEl.style.left = rx + 'px';
+      ringEl.style.top  = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+
+    document.querySelectorAll('button, a').forEach(function(el) {
+      el.addEventListener('mouseenter', function() {
+        ringEl.style.width='58px'; ringEl.style.height='58px';
+        cursorEl.style.width='5px'; cursorEl.style.height='5px';
+      });
+      el.addEventListener('mouseleave', function() {
+        ringEl.style.width='38px'; ringEl.style.height='38px';
+        cursorEl.style.width='10px'; cursorEl.style.height='10px';
+      });
+    });
+  }
+
+  // ── PARALLAX + REVEAL ────────────────────────────────────────
+  function handleMove(clientX, clientY) {
+    if (!isTouch) {
+      var cx = window.innerWidth  / 2;
+      var cy = window.innerHeight / 2;
+      var dx = (clientX - cx) / cx;
+      var dy = (clientY - cy) / cy;
+
+      blobs.forEach(function(b, i) {
+        var f = (i + 1) * 7;
+        b.style.transform = 'translate(' + (dx*f) + 'px,' + (dy*f) + 'px)';
+      });
+
+      bgText.style.transform    = 'translate(calc(-50% + ' + (dx*18) + 'px), calc(-50% + ' + (dy*8) + 'px))';
+      bgFitness.style.transform = 'translate(calc(-50% + ' + (dx*18) + 'px), calc(-50% + ' + (dy*8) + 'px))';
+    }
+
+    var rect       = personWrap.getBoundingClientRect();
+    var bodyTop    = rect.top    + rect.height * 0.20;
+    var bodyBottom = rect.bottom - rect.height * 0.02;
+    var bodyLeft   = rect.left   + rect.width  * 0.08;
+    var bodyRight  = rect.right  - rect.width  * 0.08;
+
+    var wasOverBody = isOverBody;
+    isOverBody = clientX >= bodyLeft && clientX <= bodyRight &&
+                 clientY >= bodyTop  && clientY <= bodyBottom;
+
+    if (isOverBody) {
+      clearTimeout(lingerTimer);
+      spotX = (clientX - rect.left) * (revealCanvas.width  / rect.width);
+      spotY = (clientY - rect.top)  * (revealCanvas.height / rect.height);
+      targetRadius = MAX_RADIUS;
+      hint.style.opacity = '0';
+      cursorEl.classList.add('over-body');
+      ringEl.classList.add('over-body');
+    } else {
+      if (wasOverBody) {
+        clearTimeout(lingerTimer);
+        lingerTimer = setTimeout(function() { targetRadius = 0; }, LINGER_MS);
+      }
+      hint.style.opacity = '1';
+      cursorEl.classList.remove('over-body');
+      ringEl.classList.remove('over-body');
+    }
+  }
+
+  document.addEventListener('mousemove', function(e) { handleMove(e.clientX, e.clientY); });
+  document.addEventListener('touchmove', function(e) {
+    handleMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  document.addEventListener('touchend', function() {
+    clearTimeout(lingerTimer);
+    lingerTimer = setTimeout(function() { targetRadius = 0; }, LINGER_MS);
+  });
+  document.addEventListener('mouseleave', function() {
+    clearTimeout(lingerTimer);
+    targetRadius = 0;
+    isOverBody = false;
+  });
+
+  // ── CLICK SHATTER ────────────────────────────────────────────
+  var CRACK_COUNT  = 10;
+  var CRACK_LENGTH = 120;
+
+  function spawnShatter(clientX, clientY) {
+    var canvas = document.createElement('canvas');
+    var pad = CRACK_LENGTH + 20;
+    canvas.width  = pad * 2;
+    canvas.height = pad * 2;
+    canvas.style.cssText = 'position:fixed;left:' + (clientX-pad) + 'px;top:' + (clientY-pad) + 'px;pointer-events:none;z-index:9999;';
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var cx = pad, cy = pad;
+    var cracks = [];
+
+    for (var i = 0; i < CRACK_COUNT; i++) {
+      var angle    = (i / CRACK_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      var length   = CRACK_LENGTH * (0.5 + Math.random() * 0.5);
+      var segments = [];
+      var x = cx, y = cy, a = angle, remaining = length;
+      while (remaining > 0) {
+        var actual = Math.min(15 + Math.random() * 25, remaining);
+        a += (Math.random() - 0.5) * 0.5;
+        var nx = x + Math.cos(a) * actual;
+        var ny = y + Math.sin(a) * actual;
+        segments.push({ x1: x, y1: y, x2: nx, y2: ny });
+        x = nx; y = ny; remaining -= actual;
+      }
+      if (Math.random() > 0.4) {
+        var ba = angle + (Math.random() - 0.5) * 1.2;
+        var bs = segments[Math.floor(segments.length * 0.4)];
+        if (bs) {
+          var bx = bs.x2, by = bs.y2, bangle = ba, br = length * 0.4;
+          while (br > 0) {
+            var al = Math.min(10 + Math.random() * 15, br);
+            bangle += (Math.random() - 0.5) * 0.4;
+            var bnx = bx + Math.cos(bangle) * al;
+            var bny = by + Math.sin(bangle) * al;
+            segments.push({ x1: bx, y1: by, x2: bnx, y2: bny });
+            bx = bnx; by = bny; br -= al;
+          }
+        }
+      }
+      cracks.push({ segments: segments });
+    }
+
+    var start = performance.now();
+    var drawTime = 300, fadeTime = 500, total = drawTime + fadeTime;
+
+    function animCracks(now) {
+      var elapsed = now - start;
+      if (elapsed >= total) { canvas.remove(); return; }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var drawProgress = Math.min(elapsed / drawTime, 1);
+      var fadeProgress = elapsed > drawTime ? (elapsed - drawTime) / fadeTime : 0;
+      var opacity = 1 - fadeProgress;
+      cracks.forEach(function(crack) {
+        var visibleSegs = Math.ceil(drawProgress * crack.segments.length);
+        crack.segments.slice(0, visibleSegs).forEach(function(seg, si) {
+          var distFrac = si / crack.segments.length;
+          ctx.beginPath();
+          ctx.moveTo(seg.x1, seg.y1);
+          ctx.lineTo(seg.x2, seg.y2);
+          ctx.strokeStyle = 'rgba(20,20,18,' + (opacity * (1 - distFrac * 0.6)) + ')';
+          ctx.lineWidth   = (1.5 - distFrac * 0.8) * (1 - fadeProgress * 0.5);
+          ctx.stroke();
+        });
+      });
+      requestAnimationFrame(animCracks);
+    }
+    requestAnimationFrame(animCracks);
+  }
+
+  document.addEventListener('click', function(e) { spawnShatter(e.clientX, e.clientY); });
+  document.addEventListener('touchstart', function(e) {
+    spawnShatter(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+  document.addEventListener('click', function(e) { spawnWords(e.clientX, e.clientY); });
+  document.addEventListener('touchstart', function(e) {
+    spawnWords(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+</script>
+</body>
+</html>
