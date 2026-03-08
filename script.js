@@ -14,8 +14,7 @@
    10. Parallax + Body Reveal Handler (mousemove / touchmove)
    11. Touch / Mouse Leave Events
    12. Click Shatter Effect
-   13. Word Burst Effect (on click)
-   14. STRIVE Green Spotlight Effect
+   13. STRIVE Green Spotlight Effect
 ═══════════════════════════════════════════════════════════════ */
 
 
@@ -462,61 +461,9 @@ document.addEventListener('click',      (e) => spawnShatter(e.clientX, e.clientY
 document.addEventListener('touchstart', (e) => spawnShatter(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
 
 
-/* ─────────────────────────────────────────
-   13. Word Burst Effect
-   Spawns gym-themed words that fly outward from click point,
-   each with a random neon hue, gravity, and fade.
-───────────────────────────────────────── */
-const WORDS      = ['PUSH','GRIND','LIFT','SWEAT','BEAST','HUSTLE','POWER','ELITE','STRIVE','BURN'];
-const WORD_COUNT = 3;
-const WORD_SPEED = 4;
-
-function spawnWords(clientX, clientY) {
-  for (let i = 0; i < WORD_COUNT; i++) {
-    const word = WORDS[Math.floor(Math.random() * WORDS.length)];
-    const el   = document.createElement('div');
-    const hue  = Math.floor(Math.random() * 360);
-    const angle = Math.random() * Math.PI * 2;
-    const speed = WORD_SPEED * (0.7 + Math.random() * 0.6);
-
-    el.textContent = word;
-    el.style.cssText = `
-      position:fixed; left:${clientX}px; top:${clientY}px;
-      font-family:'Bebas Neue',sans-serif; font-size:${14 + Math.random() * 10}px;
-      letter-spacing:0.1em; color:hsl(${hue},100%,50%);
-      pointer-events:none; z-index:9998; transform:translate(-50%,-50%);
-      text-shadow:0 0 8px hsl(${hue},100%,60%);
-    `;
-    document.body.appendChild(el);
-
-    let x = clientX, y = clientY;
-    let vx = Math.cos(angle) * speed;
-    let vy = Math.sin(angle) * speed;
-    const life    = 700 + Math.random() * 400; // ms lifespan
-    const start   = performance.now();
-    const gravity = 0.1;
-
-    function animWord(now) {
-      const t = (now - start) / life;
-      if (t >= 1) { el.remove(); return; }
-      vy += gravity;
-      x  += vx;
-      y  += vy;
-      el.style.left    = x + 'px';
-      el.style.top     = y + 'px';
-      el.style.opacity = 1 - t;
-      requestAnimationFrame(animWord);
-    }
-    requestAnimationFrame(animWord);
-  }
-}
-
-document.addEventListener('click',      (e) => spawnWords(e.clientX, e.clientY));
-document.addEventListener('touchstart', (e) => spawnWords(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
-
 
 /* ─────────────────────────────────────────
-   14. STRIVE Green Spotlight Effect
+   13. STRIVE Green Spotlight Effect
    ─────────────────────────────────────────
    How it works:
    - Three STRIVE divs are stacked at the same position (see HTML + CSS).
