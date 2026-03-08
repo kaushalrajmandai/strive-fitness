@@ -274,7 +274,7 @@ nav {
 ───────────────────────────────────────── */
 .person-wrap {
   position: absolute;
-  bottom: -24px;
+  bottom: -25px;
   left: 26%;
   transform: translateX(-50%);
   height: 105vh;
