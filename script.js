@@ -290,7 +290,7 @@ if (!isTouch) {
 function handleMove(clientX, clientY) {
 
   // — Parallax (desktop only) —
-  if (!isTouch) {
+  if (!isTouch && window.innerWidth > 768) {
     const cx = window.innerWidth  / 2;
     const cy = window.innerHeight / 2;
     const dx = (clientX - cx) / cx; // -1 to +1
@@ -303,10 +303,9 @@ function handleMove(clientX, clientY) {
     });
 
     // STRIVE and FITNESS text move together at same depth
-    const textTransform = `translate(calc(-50% + ${dx * 18}px), calc(-50% + ${dy * 8}px))`;
+    const textTransform = `translate(${dx * 18}px, calc(-50% + ${dy * 8}px))`;
 striveGreenWrap.style.transform  = textTransform;
-bgFitness.style.transform        = textTransform;
-// Also move the base outline layer
+bgFitness.style.transform        = `translate(${dx * 18}px, calc(-50% + ${dy * 8}px))`;
 document.querySelector('.bg-text-strive-base').style.transform = textTransform;
   }
 
