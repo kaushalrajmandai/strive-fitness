@@ -103,7 +103,7 @@ function drawContained(ctx, img, W, H) {
   const dW = iW * scale;
   const dH = iH * scale;
   const dx = (W - dW) / 2;
-  const dy = (H - dH) / 2;
+  const dy = H - dH;            // bottom-anchor so the figure sits on the marquee
   ctx.drawImage(img, dx, dy, dW, dH);
 }
 
@@ -372,88 +372,54 @@ document.addEventListener('mouseleave', () => {
    Spawns a temporary canvas at click position,
    draws radiating crack lines that fade out.
 ───────────────────────────────────────── */
-const CRACK_COUNT  = 10;
-const CRACK_LENGTH = 120;
+/* Premium ripple: soft concentric rings expand + fade from the click point.
+   Two staggered rings (ink + accent) for a smooth, water-like pulse. */
+const RIPPLE_SIZE = 460;   // canvas size (px)
+const RIPPLE_DUR  = 780;   // single-ring lifetime (ms)
 
 function spawnShatter(clientX, clientY) {
+  const s = RIPPLE_SIZE;
   const canvas = document.createElement('canvas');
-  const pad = CRACK_LENGTH + 20;
-  canvas.width  = pad * 2;
-  canvas.height = pad * 2;
-  canvas.style.cssText = `position:fixed;left:${clientX - pad}px;top:${clientY - pad}px;pointer-events:none;z-index:9999;`;
+  canvas.width = s; canvas.height = s;
+  canvas.style.cssText =
+    `position:fixed;left:${clientX - s / 2}px;top:${clientY - s / 2}px;` +
+    `pointer-events:none;z-index:9999;`;
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  const cx = pad, cy = pad;
-  const cracks = [];
+  const cx = s / 2, cy = s / 2;
+  const maxR = s / 2 - 6;
+  const start = performance.now();
 
-  // Generate crack paths
-  for (let i = 0; i < CRACK_COUNT; i++) {
-    const angle  = (i / CRACK_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
-    const length = CRACK_LENGTH * (0.5 + Math.random() * 0.5);
-    const segments = [];
-    let x = cx, y = cy, a = angle, remaining = length;
+  // Each ring: start delay + colour
+  const rings = [
+    { delay: 0,   color: '26,26,24',  alpha: 0.45 },
+    { delay: 110, color: '200,240,0', alpha: 0.55 },
+  ];
+  const life = RIPPLE_DUR + rings[rings.length - 1].delay;
 
-    // Build zigzag segments for each crack
-    while (remaining > 0) {
-      const actual = Math.min(15 + Math.random() * 25, remaining);
-      a += (Math.random() - 0.5) * 0.5;
-      const nx = x + Math.cos(a) * actual;
-      const ny = y + Math.sin(a) * actual;
-      segments.push({ x1: x, y1: y, x2: nx, y2: ny });
-      x = nx; y = ny; remaining -= actual;
-    }
+  function anim(now) {
+    const t = now - start;
+    if (t >= life) { canvas.remove(); return; }
+    ctx.clearRect(0, 0, s, s);
 
-    // Occasionally add a branch crack
-    if (Math.random() > 0.4) {
-      const ba = angle + (Math.random() - 0.5) * 1.2;
-      const bs = segments[Math.floor(segments.length * 0.4)];
-      if (bs) {
-        let bx = bs.x2, by = bs.y2, bangle = ba, br = length * 0.4;
-        while (br > 0) {
-          const al = Math.min(10 + Math.random() * 15, br);
-          bangle += (Math.random() - 0.5) * 0.4;
-          const bnx = bx + Math.cos(bangle) * al;
-          const bny = by + Math.sin(bangle) * al;
-          segments.push({ x1: bx, y1: by, x2: bnx, y2: bny });
-          bx = bnx; by = bny; br -= al;
-        }
-      }
-    }
-    cracks.push({ segments });
-  }
-
-  // Animate: draw cracks progressively, then fade out
-  const start    = performance.now();
-  const drawTime = 300;
-  const fadeTime = 500;
-  const total    = drawTime + fadeTime;
-
-  function animCracks(now) {
-    const elapsed      = now - start;
-    if (elapsed >= total) { canvas.remove(); return; }
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const drawProgress = Math.min(elapsed / drawTime, 1);
-    const fadeProgress = elapsed > drawTime ? (elapsed - drawTime) / fadeTime : 0;
-    const opacity      = 1 - fadeProgress;
-
-    cracks.forEach((crack) => {
-      const visibleSegs = Math.ceil(drawProgress * crack.segments.length);
-      crack.segments.slice(0, visibleSegs).forEach((seg, si) => {
-        const distFrac = si / crack.segments.length;
-        ctx.beginPath();
-        ctx.moveTo(seg.x1, seg.y1);
-        ctx.lineTo(seg.x2, seg.y2);
-        ctx.strokeStyle = `rgba(20,20,18,${opacity * (1 - distFrac * 0.6)})`;
-        ctx.lineWidth   = (1.5 - distFrac * 0.8) * (1 - fadeProgress * 0.5);
-        ctx.stroke();
-      });
+    rings.forEach((r) => {
+      const lt = t - r.delay;
+      if (lt < 0 || lt > RIPPLE_DUR) return;
+      const p = lt / RIPPLE_DUR;
+      const eased = 1 - Math.pow(1 - p, 3);   // ease-out
+      const radius = eased * maxR;
+      const a = (1 - p) * r.alpha;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(${r.color},${a})`;
+      ctx.lineWidth = (1 - p) * 2.4 + 0.4;
+      ctx.stroke();
     });
 
-    requestAnimationFrame(animCracks);
+    requestAnimationFrame(anim);
   }
-  requestAnimationFrame(animCracks);
+  requestAnimationFrame(anim);
 }
 
 document.addEventListener('click',      (e) => spawnShatter(e.clientX, e.clientY));
@@ -504,3 +470,124 @@ document.addEventListener('mousemove', (e) => {
     striveGreenWrap.style.opacity = '0';
   }
 });
+
+
+/* ─────────────────────────────────────────
+   14. Nav scrolled state
+   Adds .scrolled (blur + condensed padding) after scrolling past 40px.
+───────────────────────────────────────── */
+const navEl  = document.querySelector('nav');
+const heroEl = document.getElementById('hero');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  navEl.classList.toggle('scrolled', y > 40);
+  // Hero gently fades + recedes as the next section scrolls up over it
+  const p = Math.min(y / window.innerHeight, 1);
+  heroEl.style.opacity   = String(1 - p * 0.85);
+  heroEl.style.transform = `scale(${1 - p * 0.05})`;
+}, { passive: true });
+
+
+/* ─────────────────────────────────────────
+   15. Full-screen Menu Overlay
+   Hamburger opens it; close button / link click closes it.
+   Body scroll locked while open.
+───────────────────────────────────────── */
+const menuBtn     = document.querySelector('.btn-menu');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuClose   = document.getElementById('menuClose');
+
+function setMenu(open) {
+  menuOverlay.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+menuBtn.addEventListener('click', () => setMenu(!menuOverlay.classList.contains('open')));
+menuClose.addEventListener('click', () => setMenu(false));
+menuOverlay.querySelectorAll('a').forEach((a) =>
+  a.addEventListener('click', () => setMenu(false))
+);
+// Esc closes the menu
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+
+// "Join Now" in the nav jumps to the membership section
+const joinBtn = document.querySelector('.btn-join');
+if (joinBtn) {
+  joinBtn.addEventListener('click', () =>
+    document.getElementById('membership').scrollIntoView({ behavior: 'smooth' })
+  );
+}
+
+
+/* ─────────────────────────────────────────
+   16. Scroll Reveal + Animated Counters
+   IntersectionObserver fades .reveal in once; counts up [data-count].
+───────────────────────────────────────── */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((en) => {
+    const el = en.target;
+    if (en.isIntersecting) {
+      el.classList.add('in');
+      // Counters roll up only once — re-rolling on every pass looks cheap.
+      if (el.hasAttribute('data-count') && !el.dataset.counted) {
+        el.dataset.counted = '1';
+        runCount(el);
+      }
+    } else {
+      // Reset so it re-animates next time it scrolls into view (both ways).
+      el.classList.remove('in');
+      // Travel back FROM the side it exited: above viewport → drop down,
+      // below viewport → rise up. Keeps motion in sympathy with scroll.
+      el.style.setProperty('--ty', en.boundingClientRect.top < 0 ? '-44px' : '44px');
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+document.querySelectorAll('.reveal, [data-count]').forEach((el) => io.observe(el));
+
+function runCount(el) {
+  const target = parseFloat(el.getAttribute('data-count'));
+  const suffix = el.getAttribute('data-suffix') || '';
+  const dur    = 1600;
+  const start  = performance.now();
+  function tick(now) {
+    const p     = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);   // ease-out cubic
+    el.textContent = Math.round(target * eased).toLocaleString('en-IN') + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = target.toLocaleString('en-IN') + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+
+
+/* ─────────────────────────────────────────
+   17. Magnetic Buttons (desktop only)
+   Elements with [data-magnetic] drift toward the cursor when near.
+───────────────────────────────────────── */
+if (!isTouch) {
+  document.querySelectorAll('[data-magnetic]').forEach((el) => {
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width  / 2);
+      const dy = e.clientY - (r.top  + r.height / 2);
+      el.style.transform = `translate(${dx * 0.25}px, ${dy * 0.4}px)`;
+    });
+    el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+  });
+}
+
+
+/* ─────────────────────────────────────────
+   18. Dark-section cursor
+   Switch the cursor dot/ring to light over dark backgrounds.
+───────────────────────────────────────── */
+if (!isTouch) {
+  document.querySelectorAll('.section-dark, .menu-overlay, .footer').forEach((sec) => {
+    sec.addEventListener('mouseenter', () => {
+      cursorEl.classList.add('light'); ringEl.classList.add('light');
+    });
+    sec.addEventListener('mouseleave', () => {
+      cursorEl.classList.remove('light'); ringEl.classList.remove('light');
+    });
+  });
+}
