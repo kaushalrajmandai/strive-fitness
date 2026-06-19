@@ -86,6 +86,28 @@
   </nav>
 
   <!-- ═══════════════════════════════════════
+       FULL-SCREEN MENU OVERLAY
+       Opens from the hamburger. Big Bebas links.
+  ═══════════════════════════════════════ -->
+  <div class="menu-overlay" id="menuOverlay">
+    <button class="menu-close" id="menuClose" aria-label="Close menu">&times;</button>
+    <nav class="menu-nav">
+      <a class="menu-link" href="#hero"><span class="menu-idx">01</span>Home</a>
+      <a class="menu-link" href="#about"><span class="menu-idx">02</span>Manifesto</a>
+      <a class="menu-link" href="#programs"><span class="menu-idx">03</span>Programs</a>
+      <a class="menu-link" href="#coaches"><span class="menu-idx">04</span>Coaches</a>
+      <a class="menu-link" href="#membership"><span class="menu-idx">05</span>Membership</a>
+      <a class="menu-link" href="#join"><span class="menu-idx">06</span>Join</a>
+    </nav>
+    <div class="menu-foot">
+      <a href="#">Instagram</a>
+      <a href="#">YouTube</a>
+      <a href="#">hello@strive.fit</a>
+      <a href="#">+91 98765 43210</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
        HERO SECTION
   ═══════════════════════════════════════ -->
   <section class="hero" id="hero">
@@ -136,42 +158,40 @@
       <canvas id="revealCanvas"></canvas>
     </div>
 
+    <!-- ── UI overlays — inside .hero so they scroll away with it ── -->
+
+    <!-- Hint: fades out when cursor enters body zone (JS) -->
+    <div class="hover-hint" id="hoverHint">Move cursor over body to reveal</div>
+
+    <!-- Offer card: bottom left -->
+    <div class="card-info fade-in d3">
+      <div class="card-label">
+        <!-- Lightning bolt icon -->
+        <svg width="9" height="13" viewBox="0 0 10 14" fill="none" style="vertical-align:middle;margin-right:4px;margin-bottom:1px">
+          <path d="M6 0L0 8h4.5L4 14l7-9H6L6 0z" fill="#1a1a18"/>
+        </svg>
+        LIMITED TIME
+      </div>
+      <div class="card-stat">50% OFF</div>
+      <div class="card-sub">Founding Member Deal</div>
+      <div class="card-divider"></div>
+      <div class="card-offer-row">
+        <span class="card-original">&#8377;14999</span>
+        <span class="card-price">&#8377;8999<span class="card-mo">/yr</span></span>
+      </div>
+      <div class="card-badge">
+        <div class="badge-dot"></div>
+        <span>3 spots left</span>
+      </div>
+    </div>
+
+    <!-- Scroll indicator: bottom right -->
+    <div class="scroll-hint fade-in d3">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+
   </section>
-
-  <!-- ═══════════════════════════════════════
-       UI OVERLAYS
-  ═══════════════════════════════════════ -->
-
-  <!-- Hint: fades out when cursor enters body zone (JS) -->
-  <div class="hover-hint" id="hoverHint">Move cursor over body to reveal</div>
-
-  <!-- Offer card: bottom left -->
-  <div class="card-info fade-in d3">
-    <div class="card-label">
-      <!-- Lightning bolt icon -->
-      <svg width="9" height="13" viewBox="0 0 10 14" fill="none" style="vertical-align:middle;margin-right:4px;margin-bottom:1px">
-        <path d="M6 0L0 8h4.5L4 14l7-9H6L6 0z" fill="#1a1a18"/>
-      </svg>
-      LIMITED TIME
-    </div>
-    <div class="card-stat">50% OFF</div>
-    <div class="card-sub">Founding Member Deal</div>
-    <div class="card-divider"></div>
-    <div class="card-offer-row">
-      <span class="card-original">&#8377;14999</span>
-      <span class="card-price">&#8377;8999<span class="card-mo">/yr</span></span>
-    </div>
-    <div class="card-badge">
-      <div class="badge-dot"></div>
-      <span>3 spots left</span>
-    </div>
-  </div>
-
-  <!-- Scroll indicator: bottom right -->
-  <div class="scroll-hint fade-in d3">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
 
   <!-- ═══════════════════════════════════════
        MARQUEE — scrolling text bar at bottom
@@ -194,6 +214,260 @@
       <span>Elite Training</span><span class="marquee-dot">&#10022;</span>
     </div>
   </div>
+
+  <!-- ═══════════════════════════════════════
+       MANIFESTO
+  ═══════════════════════════════════════ -->
+  <section class="section manifesto" id="about">
+    <div class="section-inner">
+      <div class="eyebrow reveal">Our Philosophy</div>
+      <div class="manifesto-grid">
+        <h2 class="sec-title reveal">Strength isn't given. It's <span class="accent">earned</span>—rep by rep.</h2>
+        <div class="manifesto-body">
+          <p class="reveal" style="--rd:.1s">Strive Fitness isn't another gym. It's a discipline. We build athletes, not memberships — with intelligent programming, world-class coaching, and a room full of people who refuse to settle.</p>
+          <p class="reveal" style="--rd:.2s">No mirrors-only culture. No gimmicks. Just the work, done right, every single day.</p>
+          <div class="sig reveal" style="--rd:.3s">— The Strive Team</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       STATS — animated counters
+  ═══════════════════════════════════════ -->
+  <section class="section section-dark stats">
+    <div class="section-inner">
+      <div class="eyebrow reveal">By The Numbers</div>
+      <div class="stats-grid">
+        <div class="stat reveal">
+          <div class="stat-num" data-count="2400" data-suffix="+">0</div>
+          <div class="stat-label">Active Members</div>
+        </div>
+        <div class="stat reveal" style="--rd:.1s">
+          <div class="stat-num" data-count="18">0</div>
+          <div class="stat-label">Elite Coaches</div>
+        </div>
+        <div class="stat reveal" style="--rd:.2s">
+          <div class="stat-num" data-count="50" data-suffix="+">0</div>
+          <div class="stat-label">Classes / Week</div>
+        </div>
+        <div class="stat reveal" style="--rd:.3s">
+          <div class="stat-num" data-count="12">0</div>
+          <div class="stat-label">Years Strong</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PROGRAMS — numbered rows
+  ═══════════════════════════════════════ -->
+  <section class="section programs" id="programs">
+    <div class="section-inner">
+      <div class="eyebrow reveal">What We Train</div>
+      <h2 class="sec-title reveal">Programs</h2>
+
+      <div class="prog-row reveal">
+        <span class="prog-idx">01</span>
+        <span class="prog-name">Strength</span>
+        <span class="prog-tag">Powerlifting · Barbell</span>
+        <span class="prog-go">&rarr;</span>
+      </div>
+      <div class="prog-row reveal">
+        <span class="prog-idx">02</span>
+        <span class="prog-name">Hypertrophy</span>
+        <span class="prog-tag">Muscle · Aesthetics</span>
+        <span class="prog-go">&rarr;</span>
+      </div>
+      <div class="prog-row reveal">
+        <span class="prog-idx">03</span>
+        <span class="prog-name">Conditioning</span>
+        <span class="prog-tag">HIIT · Engine</span>
+        <span class="prog-go">&rarr;</span>
+      </div>
+      <div class="prog-row reveal">
+        <span class="prog-idx">04</span>
+        <span class="prog-name">Boxing</span>
+        <span class="prog-tag">Striking · Footwork</span>
+        <span class="prog-go">&rarr;</span>
+      </div>
+      <div class="prog-row reveal">
+        <span class="prog-idx">05</span>
+        <span class="prog-name">Mobility</span>
+        <span class="prog-tag">Recovery · Longevity</span>
+        <span class="prog-go">&rarr;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       COACHES
+  ═══════════════════════════════════════ -->
+  <section class="section coaches" id="coaches">
+    <div class="section-inner">
+      <div class="eyebrow reveal">The Team</div>
+      <h2 class="sec-title reveal">Coaches</h2>
+      <div class="coaches-grid">
+        <div class="coach reveal">
+          <div class="coach-initials">AR</div>
+          <div class="coach-spacer"></div>
+          <div class="coach-name">Arjun Rao</div>
+          <div class="coach-role">Head Strength Coach</div>
+        </div>
+        <div class="coach reveal" style="--rd:.1s">
+          <div class="coach-initials">MK</div>
+          <div class="coach-spacer"></div>
+          <div class="coach-name">Maya Kapoor</div>
+          <div class="coach-role">Conditioning · HIIT</div>
+        </div>
+        <div class="coach reveal" style="--rd:.2s">
+          <div class="coach-initials">DS</div>
+          <div class="coach-spacer"></div>
+          <div class="coach-name">Dev Sharma</div>
+          <div class="coach-role">Boxing · Performance</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       MEMBERSHIP / PRICING
+  ═══════════════════════════════════════ -->
+  <section class="section membership" id="membership">
+    <div class="section-inner">
+      <div class="eyebrow reveal">Join The Movement</div>
+      <h2 class="sec-title reveal">Membership</h2>
+      <div class="price-grid">
+
+        <div class="plan reveal">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">&#8377;3999<small>/mo</small></div>
+          <ul class="plan-list">
+            <li>Full gym floor access</li>
+            <li>3 group classes / week</li>
+            <li>App workout library</li>
+            <li>Locker &amp; showers</li>
+          </ul>
+          <button class="plan-cta">Choose Starter</button>
+        </div>
+
+        <div class="plan plan-featured reveal" style="--rd:.1s">
+          <div class="plan-tag">Most Popular</div>
+          <div class="plan-name">Performance</div>
+          <div class="plan-price">&#8377;8999<small>/yr</small></div>
+          <ul class="plan-list">
+            <li>Everything in Starter</li>
+            <li>Unlimited group classes</li>
+            <li>Monthly 1:1 coaching</li>
+            <li>Nutrition programming</li>
+            <li>Founding member rate</li>
+          </ul>
+          <button class="plan-cta" data-magnetic>Claim 50% Off</button>
+        </div>
+
+        <div class="plan reveal" style="--rd:.2s">
+          <div class="plan-name">Elite</div>
+          <div class="plan-price">&#8377;14999<small>/mo</small></div>
+          <ul class="plan-list">
+            <li>Everything in Performance</li>
+            <li>Weekly private coaching</li>
+            <li>Recovery &amp; physio access</li>
+            <li>Personalised programming</li>
+          </ul>
+          <button class="plan-cta">Choose Elite</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       TESTIMONIALS
+  ═══════════════════════════════════════ -->
+  <section class="section testimonials">
+    <div class="section-inner">
+      <div class="eyebrow reveal">Results</div>
+      <h2 class="sec-title reveal">Proof, not promises.</h2>
+      <div class="quotes-grid">
+        <div class="quote reveal">
+          <div class="quote-mark">&ldquo;</div>
+          <p class="quote-text">Dropped 14kg and hit my first 140kg deadlift in eight months. The coaching here is on another level.</p>
+          <div class="quote-who">
+            <span class="quote-name">Rohan M.</span>
+            <span class="quote-role">Member · 2 yrs</span>
+          </div>
+        </div>
+        <div class="quote reveal" style="--rd:.1s">
+          <div class="quote-mark">&ldquo;</div>
+          <p class="quote-text">I've trained everywhere. Strive is the only place that programmed for me — not a template. Strongest I've ever been.</p>
+          <div class="quote-who">
+            <span class="quote-name">Aisha K.</span>
+            <span class="quote-role">Member · 1 yr</span>
+          </div>
+        </div>
+        <div class="quote reveal" style="--rd:.2s">
+          <div class="quote-mark">&ldquo;</div>
+          <p class="quote-text">The energy in this room is unmatched. You walk in tired and walk out unstoppable. Worth every rupee.</p>
+          <div class="quote-who">
+            <span class="quote-name">Vikram S.</span>
+            <span class="quote-role">Member · 3 yrs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CTA / JOIN
+  ═══════════════════════════════════════ -->
+  <section class="section section-dark cta" id="join">
+    <div class="section-inner">
+      <div class="eyebrow reveal" style="justify-content:center">Limited Founding Spots</div>
+      <h2 class="sec-title reveal">Ready to <span class="accent">Strive</span>?</h2>
+      <p class="cta-sub reveal" style="--rd:.1s">Lock in the founding member rate — 50% off, only 3 spots left this month. Leave your email and we'll set up your first session.</p>
+      <form class="cta-form reveal" style="--rd:.2s" onsubmit="return false">
+        <input class="cta-input" type="email" placeholder="your@email.com" aria-label="Email address" />
+        <button class="cta-btn" data-magnetic type="submit">Get Started</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#hero" class="logo"><span>STRIVE</span><span>FITNESS</span></a>
+        <p>Premium strength &amp; conditioning. Built for people who refuse to settle.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="#about">Manifesto</a>
+        <a href="#programs">Programs</a>
+        <a href="#coaches">Coaches</a>
+        <a href="#membership">Membership</a>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <a href="#">Indiranagar, Bengaluru</a>
+        <a href="#">Mon–Sat · 5am–11pm</a>
+        <a href="#">Sun · 7am–2pm</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="#">Instagram</a>
+        <a href="#">YouTube</a>
+        <a href="#">hello@strive.fit</a>
+        <a href="#">+91 98765 43210</a>
+      </div>
+    </div>
+    <div class="footer-mark">STRIVE</div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Strive Fitness</span>
+      <span>Built to move you.</span>
+    </div>
+  </footer>
 
   <!-- External JS — loaded at end of body -->
   <script src="script.js"></script>

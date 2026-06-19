@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Editor / tooling
+.vscode/
+.claude/
+CLAUDE.md
+
+# Scratch / unused assets
+0530.mp4
